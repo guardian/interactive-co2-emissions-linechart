@@ -11,3 +11,49 @@
 .interactive-atom {
     margin: 0 !important;
 }
+
+
+.line {
+  fill: none;
+  stroke: #cc0a11;
+  stroke-width: 3px;
+}
+
+.domain{
+	display: none;
+}
+
+.y.axis .tick{
+	text{
+		transform: translate(8px, -10px);
+		text-align: left;
+		fill: #dcdcdc;
+	}
+
+	line{
+		stroke-width: 1;
+		stroke: #dcdcdc;
+	}
+
+	@include fs-textSans(2);
+}
+
+.x.axis .tick{
+	@include fs-textSans(4);
+
+	line{
+		opacity:0;
+		stroke-width: 2;
+		stroke: #dcdcdc;
+	}
+
+	text{
+		opacity: 0;
+	}
+}
+
+
+.t1960, .t1970, .t1980, .t1990, .t2000, .t2010,.l1960, .l1970, .l1980, .l1990, .l2000, .l2010{
+	opacity: 1!important;
+}
+
