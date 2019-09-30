@@ -23,15 +23,20 @@ let x = d3.scaleTime().range([margin.left, width - margin.right]);
 
 let y = d3.scaleLinear().range([height - margin.top, 0]);
 
-let valueline = d3.line()
+let valueline1 = d3.line()
 .x(function(d) { return x(d.date); })
-.y(function(d) { return y(d.value); })
+.y(function(d) { return y(d.value1); })
+.curve(d3.curveMonotoneX);
+
+let valueline2 = d3.line()
+.x(function(d) { return x(d.date); })
+.y(function(d) { return y(d.value2); })
 .curve(d3.curveMonotoneX);
 
 let svg = d3.select(".gv-chart-wrapper")
 .append("svg")
 .attr("width", width)
-.attr("height", height)
+.attr("height", height + margin.top + margin.bottom)
 
 let app = wrapperEl.getBoundingClientRect();
 let curtain;
@@ -40,12 +45,49 @@ let lines;
 
 loadJson('https://interactive.guim.co.uk/docsdata-test/1Q2FlSoVF_CE5C45zjAl2xEvgQFeM-n-eC8Q2h7uuDUY.json').then(emissions => {
 
-	emissions.sheets.data.map(entry => data.push({date:parseTime(entry.month + '-' + entry.year), value:+entry.average}));
+
+	emissions.sheets.data2.map(entry => data.push({date:parseTime(0 + '-' + entry.Year), value1:+entry['Total for top 20 companies'], value2:+entry['Total given for global emissions with cement']}));
+
+	//emissions.sheets.data.map(entry => data.push({date:parseTime(entry.month + '-' + entry.year), value:+entry.average}));
 
 	x.domain(d3.extent(data, function(d) { return d.date; }));
-	y.domain([300, d3.max(data, function(d) { return d.value; })]);
+	y.domain([0, d3.max(data, function(d) { return d.value2 + 1000;})]);
 
-	let xaxis = svg.append("g")
+	/*let dotted = svg.append('line')
+	.attr("x1", x(parseTime(0 + '-' + 1977)))  //<<== change your code here
+	.attr("y1", 0)
+	.attr("x2", x(parseTime(0 + '-' + 1977)))  //<<== and here
+	.attr("y2", height - margin.bottom)
+	.attr('class', 'dottedLine')*/
+
+	let line1 = svg.append("path")
+	.data([data])
+	.attr("class", "line1")
+	.attr("d", valueline1)
+
+	let line2 = svg.append("path")
+	.data([data])
+	.attr("class", "line2")
+	.attr("d", valueline2)
+
+	curtain = svg.append('rect')
+	.attr("transform", "translate(" + margin.left + ",0)")
+	.attr('height', height )
+	.attr('width', width)
+	.attr('class', 'curtain')
+
+	let yaxis = svg.append("g")
+	.attr("class", "y axis")
+	.attr("text-anchor", "start")
+	.call(d3.axisLeft(y)
+		.ticks(6)
+		.tickSizeInner(-width + margin.right)
+	)
+	.selectAll("text")
+    .style("text-anchor", "start");
+
+
+    let xaxis = svg.append("g")
 	.attr("transform", "translate(0," + (height - margin.top) + ")")
 	.attr("class", "x axis")
 	.call(d3.axisBottom(x)
@@ -60,29 +102,7 @@ loadJson('https://interactive.guim.co.uk/docsdata-test/1Q2FlSoVF_CE5C45zjAl2xEvg
 	texts.attr("class", (d,i) => 't' + texts.nodes()[i].innerHTML);
 	lines.attr("class", (d,i) => 'l' + texts.nodes()[i].innerHTML);
 
-	let line = svg.append("path")
-	.data([data])
-	.attr("class", "line")
-	.attr("d", valueline);
-
-	curtain = svg.append('rect')
-	.attr("transform", "translate(" + margin.left + ",0)")
-	.attr('height', height - margin.bottom)
-	.attr('width', width)
-	.style('fill', '#ffffff')
-
-	let yaxis = svg.append("g")
-	.attr("class", "y axis")
-	.attr("text-anchor", "start")
-	.call(d3.axisLeft(y)
-		.ticks(6)
-		.tickSize(0, 0)
-		.tickSizeInner(-width + margin.right)
-	)
-	.selectAll("text")
-    .style("text-anchor", "start");
-
-   	let xticks = d3.selectAll('.x.axis g').nodes();
+    
 
 	makeTransition(1965)
 })
@@ -100,18 +120,7 @@ function makeTransition(year){
 		.transition()
 		.ease(d3.easeSin)
 		.duration(1000)
-		.attr('transform', 'translate(' + ( rect.x - app.x  )+ ', 0)')
+		.attr('transform', 'translate(' + ( rect.x - app.x  ) + ', 0)')
 
 	}
 }
-
-
-
-
-
-
-
-
-
-
-

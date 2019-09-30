@@ -7,15 +7,29 @@
 // Uncomment for full screen (including immersive article main media)
 //@import "fullscreen";
 
+
+
+
+
 .element-atom,
 .interactive-atom {
     margin: 0 !important;
 }
 
+.gv-chart-wrapper svg {
+	//overflow:visible;
+}
 
-.line {
+
+.line1 {
   fill: none;
   stroke: #cc0a11;
+  stroke-width: 3px;
+}
+
+.line2 {
+  fill: none;
+  stroke: #ff6600;
   stroke-width: 3px;
 }
 
@@ -52,8 +66,20 @@
 	}
 }
 
+.curtain{
+	fill:white;
+}
 
-.t1960, .t1970, .t1980, .t1990, .t2000, .t2010,.l1960, .l1970, .l1980, .l1990, .l2000, .l2010{
+
+
+.t1950, .t1960, .t1970, .t1980, .t1990, .t2000, .t2010,.l1960, .l1970, .l1980, .l1990, .l2000, .l2010{
 	opacity: 1!important;
 }
+
+/* .dottedLine{
+	stroke: #b3b3b4;
+	stroke-linecap: round;
+	stroke-width: 2px;
+	stroke-dasharray: (1,5);
+} */
 
