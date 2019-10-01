@@ -19,7 +19,7 @@ const height = isMobile ? window.innerHeight*0.50 : Math.min(500, Math.max(windo
 
 const parseTime = d3.timeParse("%m-%Y")
 
-let x = d3.scaleTime().range([margin.left, width - margin.right]);
+let x = d3.scaleTime().range([50, width - margin.right]);
 
 let y = d3.scaleLinear().range([height - margin.top, 0]);
 
@@ -42,6 +42,7 @@ let app = wrapperEl.getBoundingClientRect();
 let curtain;
 let texts;
 let lines;
+let format = isMobile ? d3.timeFormat('%y') : d3.timeFormat('%Y')
 
 loadJson('https://interactive.guim.co.uk/docsdata-test/1Q2FlSoVF_CE5C45zjAl2xEvgQFeM-n-eC8Q2h7uuDUY.json').then(emissions => {
 
@@ -49,6 +50,9 @@ loadJson('https://interactive.guim.co.uk/docsdata-test/1Q2FlSoVF_CE5C45zjAl2xEvg
 	emissions.sheets.data2.map(entry => data.push({date:parseTime(0 + '-' + entry.Year), value1:+entry['Total for top 20 companies'], value2:+entry['Total given for global emissions with cement']}));
 
 	//emissions.sheets.data.map(entry => data.push({date:parseTime(entry.month + '-' + entry.year), value:+entry.average}));
+
+
+	console.log(d3.extent(data, function(d) { return d.date; }))
 
 	x.domain(d3.extent(data, function(d) { return d.date; }));
 	y.domain([0, d3.max(data, function(d) { return d.value2 + 1000;})]);
@@ -91,6 +95,7 @@ loadJson('https://interactive.guim.co.uk/docsdata-test/1Q2FlSoVF_CE5C45zjAl2xEvg
 	.attr("transform", "translate(0," + (height - margin.top) + ")")
 	.attr("class", "x axis")
 	.call(d3.axisBottom(x)
+		.tickFormat(format)
 		.ticks(d3.timeYear)
 		.tickSize(0, 0)
 		.tickSizeInner(5)
@@ -104,13 +109,18 @@ loadJson('https://interactive.guim.co.uk/docsdata-test/1Q2FlSoVF_CE5C45zjAl2xEvg
 
     
 
-	makeTransition(1965)
+	makeTransition(2017)
 })
 
 
 function makeTransition(year){
 
-	let target = d3.select('.l' + year).node();
+	console.log(year, String(year).substr(2,4))
+
+
+	let tick = isMobile ? String(year).substr(2,4) : year
+
+	let target = d3.select('.l' + tick).node();
 
 	if(target){
 
