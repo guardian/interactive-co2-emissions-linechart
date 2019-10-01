@@ -57,7 +57,7 @@
 
 	line{
 		opacity:0;
-		stroke-width: 2;
+		stroke-width: 1;
 		stroke: #dcdcdc;
 	}
 
@@ -67,7 +67,7 @@
 }
 
 .curtain{
-	fill:white;
+	fill:#ffffff;
 }
 
 
@@ -115,4 +115,10 @@
 	stroke-width: 2px;
 	stroke-dasharray: (1,5);
 } */
+
+
+.line{
+		stroke-width: 1;
+		stroke: #dcdcdc;
+	}
 

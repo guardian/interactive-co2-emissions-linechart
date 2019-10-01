@@ -19,7 +19,7 @@ const height = isMobile ? window.innerHeight*0.50 : Math.min(500, Math.max(windo
 
 const parseTime = d3.timeParse("%m-%Y")
 
-let x = d3.scaleTime().range([50, width - margin.right]);
+let x = d3.scaleTime().range([margin.left, width + margin.right]);
 
 let y = d3.scaleLinear().range([height - margin.top, 0]);
 
@@ -36,7 +36,7 @@ let valueline2 = d3.line()
 let svg = d3.select(".gv-chart-wrapper")
 .append("svg")
 .attr("width", width)
-.attr("height", height + margin.top + margin.bottom)
+.attr("height", height)
 
 let app = wrapperEl.getBoundingClientRect();
 let curtain;
@@ -47,48 +47,41 @@ let format = isMobile ? d3.timeFormat('%y') : d3.timeFormat('%Y')
 loadJson('https://interactive.guim.co.uk/docsdata-test/1Q2FlSoVF_CE5C45zjAl2xEvgQFeM-n-eC8Q2h7uuDUY.json').then(emissions => {
 
 
-	emissions.sheets.data2.map(entry => data.push({date:parseTime(0 + '-' + entry.Year), value1:+entry['Total for top 20 companies'], value2:+entry['Total given for global emissions with cement']}));
-
-	//emissions.sheets.data.map(entry => data.push({date:parseTime(entry.month + '-' + entry.year), value:+entry.average}));
-
-
-	console.log(d3.extent(data, function(d) { return d.date; }))
+	emissions.sheets.data2.map(entry => data.push({date:parseTime(0 + '-' + entry.Year), value1:+entry['Total for top 20 companies'] / 1000, value2:+entry['Total given for global emissions with cement'] / 1000}));
 
 	x.domain(d3.extent(data, function(d) { return d.date; }));
-	y.domain([0, d3.max(data, function(d) { return d.value2 + 1000;})]);
-
-	/*let dotted = svg.append('line')
-	.attr("x1", x(parseTime(0 + '-' + 1977)))  //<<== change your code here
-	.attr("y1", 0)
-	.attr("x2", x(parseTime(0 + '-' + 1977)))  //<<== and here
-	.attr("y2", height - margin.bottom)
-	.attr('class', 'dottedLine')*/
-
-	let line1 = svg.append("path")
-	.data([data])
-	.attr("class", "line1")
-	.attr("d", valueline1)
-
-	let line2 = svg.append("path")
-	.data([data])
-	.attr("class", "line2")
-	.attr("d", valueline2)
-
-	curtain = svg.append('rect')
-	.attr("transform", "translate(" + margin.left + ",0)")
-	.attr('height', height )
-	.attr('width', width)
-	.attr('class', 'curtain')
+	y.domain([0, d3.max(data, function(d) { return d.value2 + 1;})]);
 
 	let yaxis = svg.append("g")
 	.attr("class", "y axis")
 	.attr("text-anchor", "start")
 	.call(d3.axisLeft(y)
 		.ticks(6)
-		.tickSizeInner(-width + margin.right)
+		.tickSizeInner(-width)
 	)
 	.selectAll("text")
     .style("text-anchor", "start");
+
+	let line1 = svg.append("path")
+	.data([data])
+	.attr("class", "line1")
+	.attr("d", valueline1)
+
+	console.log([data])
+
+	let line2 = svg.append("path")
+	.data([data])
+	.attr("class", "line2")
+	.attr("d", valueline2)
+
+	curtain = svg.append('g').attr('class', 'curtain');
+
+	
+	curtain
+	.append('rect')
+	//d.attr("transform", "translate(" + margin.left + ",0)")
+	.attr('height', height - margin.bottom )
+	.attr('width', width)
 
 
     let xaxis = svg.append("g")
@@ -104,19 +97,32 @@ loadJson('https://interactive.guim.co.uk/docsdata-test/1Q2FlSoVF_CE5C45zjAl2xEvg
 	texts = d3.selectAll(".tick text");
 	lines = d3.selectAll(".tick line");
 
+	let yLines = d3.selectAll(".y.axis line").nodes()
+	let yTexts = d3.selectAll(".y.axis text").nodes()
+
+
+	let ticks = d3.selectAll(".y.axis .tick").nodes()
+
+	ticks.map((line,i) => {
+
+		curtain.append('line')
+		.attr('x1', 0)
+		.attr('x2', width)
+		.attr('y1', 0)
+		.attr('y2', 0)
+		.attr('transform', "translate(0,"+ Number(d3.select(line).attr('transform').split("translate(0,")[1].split(')')[0]) +")")
+		.attr('class', 'line')
+
+	})
+
 	texts.attr("class", (d,i) => 't' + texts.nodes()[i].innerHTML);
 	lines.attr("class", (d,i) => 'l' + texts.nodes()[i].innerHTML);
 
-    
-
-	makeTransition(2017)
+	makeTransition(1990)
 })
 
 
 function makeTransition(year){
-
-	console.log(year, String(year).substr(2,4))
-
 
 	let tick = isMobile ? String(year).substr(2,4) : year
 
