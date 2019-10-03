@@ -49,8 +49,8 @@ loadJson('https://interactive.guim.co.uk/docsdata-test/1Q2FlSoVF_CE5C45zjAl2xEvg
 
 	emissions.sheets.data2.map(entry => data.push({date:parseTime(0 + '-' + entry.Year), value1:+entry['Total for top 20 companies'] / 1000, value2:+entry['Total given for global emissions with cement'] / 1000}));
 
-	x.domain([parseTime(0 + '-' + 1950), parseTime(12 + '-' + 2018)]);
-	y.domain([0, d3.max(data, function(d) { return d.value2 + 1;})]);
+	x.domain([parseTime(0 + '-' + 1950), parseTime(12 + '-' + 2017)]);
+	y.domain([0, d3.max(data, function(d) { return d.value2 + 2;})]);
 
 	let yaxis = svg.append("g")
 	.attr("class", "y axis")
@@ -116,7 +116,7 @@ loadJson('https://interactive.guim.co.uk/docsdata-test/1Q2FlSoVF_CE5C45zjAl2xEvg
 	texts.attr("class", (d,i) => 't' + texts.nodes()[i].innerHTML);
 	lines.attr("class", (d,i) => 'l' + texts.nodes()[i].innerHTML);
 
-	makeTransition(2018)
+	makeTransition(2017)
 })
 
 
