@@ -19,7 +19,7 @@ const height = isMobile ? window.innerHeight*0.50 : Math.min(500, Math.max(windo
 
 const parseTime = d3.timeParse("%m-%Y")
 
-let x = d3.scaleTime().range([margin.left, width + margin.right]);
+let x = d3.scaleTime().range([margin.left, width - margin.right]);
 
 let y = d3.scaleLinear().range([height - margin.top, 0]);
 
@@ -49,7 +49,7 @@ loadJson('https://interactive.guim.co.uk/docsdata-test/1Q2FlSoVF_CE5C45zjAl2xEvg
 
 	emissions.sheets.data2.map(entry => data.push({date:parseTime(0 + '-' + entry.Year), value1:+entry['Total for top 20 companies'] / 1000, value2:+entry['Total given for global emissions with cement'] / 1000}));
 
-	x.domain(d3.extent(data, function(d) { return d.date; }));
+	x.domain([parseTime(0 + '-' + 1950), parseTime(12 + '-' + 2018)]);
 	y.domain([0, d3.max(data, function(d) { return d.value2 + 1;})]);
 
 	let yaxis = svg.append("g")
@@ -66,8 +66,6 @@ loadJson('https://interactive.guim.co.uk/docsdata-test/1Q2FlSoVF_CE5C45zjAl2xEvg
 	.data([data])
 	.attr("class", "line1")
 	.attr("d", valueline1)
-
-	console.log([data])
 
 	let line2 = svg.append("path")
 	.data([data])
@@ -118,7 +116,7 @@ loadJson('https://interactive.guim.co.uk/docsdata-test/1Q2FlSoVF_CE5C45zjAl2xEvg
 	texts.attr("class", (d,i) => 't' + texts.nodes()[i].innerHTML);
 	lines.attr("class", (d,i) => 'l' + texts.nodes()[i].innerHTML);
 
-	makeTransition(1990)
+	makeTransition(2018)
 })
 
 
